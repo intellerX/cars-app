@@ -81,37 +81,27 @@ export const loginUser = ({ email, password }, redirectUrl) => {
   }
 };
 
-export const sendLocation = (latitude,longitude,id) => {
+export const sendLocation = () => {
 
-const bodyParameters = {
-   lat: latitude,
-   lng: longitude
-};
-
-const config = {
-  headers: {
-    Authorization: `Bearer ${cookies.get('token')}`,
-    "Content-Type": "application/json",
-    'Access-Control-Allow-Origin': '*',
-  }  
-};
-
-  return (dispatch) => {
-    axios.put(`https://cars-api.vercel.app/api/cars/${id}`, bodyParameters, config)
-      .catch(error => dispatch(setLocation(error)))
-  };
-};
-
-export const obtainCars = () => {
-  return (dispatch) => {
-    axios({
-      url: `https://cars-api.vercel.app/api/cars`,
-      headers: { Authorization: `Bearer ${cookies.get('token')}` },
-      method: 'get'
-    })
-    .catch(error => dispatch(getCars(error)));
+  const bodyParameters = {
+    lat: 1,
+    lng: 1
   };
 
-} 
+  const config = {
+    headers: {
+      Authorization: `Bearer ${cookies.get('token')}`,
+      "Content-Type": "application/json",
+      'Access-Control-Allow-Origin': '*',
+    }  
+  };
+
+    return (dispatch) => {
+      axios.put(`https://cars-api.vercel.app/api/cars/5f75e05084b9f7f57b29bae0`, bodyParameters, config)
+        .catch(error => dispatch(setLocation(error)))
+    };
+  };
+
+  
 
 export { setFavorite as default }

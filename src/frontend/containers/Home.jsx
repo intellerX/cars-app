@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import axios from 'axios';
 import cookies, { get } from 'js-cookie';
-import { sendLocation, obtainCars } from "../actions";
+import { sendLocation } from "../actions";
 
 
 // import Header from '../components/Header';
@@ -29,23 +29,39 @@ const Home = ({props,cars}) => {
     });
   };
 
+  const send = (id) => {
+    const bodyParameters = {
+      lat: 1,
+      lng: 1
+    };
+  
+    const config = {
+      headers: {
+        Authorization: `Bearer ${cookies.get('token')}`,
+        "Content-Type": "application/json",
+        'Access-Control-Allow-Origin': '*',
+      }  
+    };
+  
+    axios.put(`https://cars-api.vercel.app/api/cars/${id}`, bodyParameters, config)
+      
+  }
  
 
 
   const handleSubmit = event => {
 
-    const carList = cars.filter(car => car.idUser === cookies.get('id'));
-
-    
+    const carList = cars.filter(car => car.idUser === cookies.get('id'));    
 
     
     event.preventDefault();
+    
     carList.forEach(element => {
-      props.sendLocation(1,1,element.id);
+      send(element._id);
 
     });
-    console.log(carList);
     
+    console.log(carList);    
     
     
   }
@@ -71,7 +87,6 @@ const Home = ({props,cars}) => {
 
 const mapDispatchToProps = {
   sendLocation,
-  obtainCars
 };
 
 const mapStateToProps = state => {
@@ -81,7 +96,7 @@ const mapStateToProps = state => {
 };
 
 Home.propTypes = {
-  sendLocation: PropTypes.func
+  sendLocation: PropTypes.func,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
