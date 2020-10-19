@@ -13,12 +13,15 @@ import { sendLocation } from "../actions";
 import '../assets/styles/Home.scss';
 
 const Home = ({props,cars}) => {
+
+  var latt = 0;
+  var longg =0;
   
 
   const [form, setValues] = useState({
 
-    latitude: '',
-    longitude: '',
+    latitude: 1,
+    longitude: 1,
   });
 
   const update = () => {
@@ -57,12 +60,8 @@ const Home = ({props,cars}) => {
     console.log(`Longitude: ${  crd.longitude}`);
     console.log(`More or less ${  crd.accuracy  } meters.`);
 
-    setValues({
-      ...form,
-      latitude: crd.latitude,
-      longitude: crd.longitude
-
-    });
+    latt = crd.latitude;
+    longg = crd.longitude;
   };
   
   function error(err) {
@@ -78,7 +77,7 @@ const Home = ({props,cars}) => {
     event.preventDefault();
     
     carList.forEach(element => {
-      send(form.latitude, form.longitude,element._id);
+      send(latt, longg,element._id);
 
     });
 
