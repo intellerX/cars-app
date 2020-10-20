@@ -8,14 +8,14 @@ import cookies, { get } from 'js-cookie';
 import { sendLocation } from "../actions";
 
 
-// import Header from '../components/Header';
+import Header from '../components/Header';
 
 import '../assets/styles/Home.scss';
 
-const Home = ({props,cars}) => {
+const Home = ({cars}) => {
 
-  var latt = 0;
-  var longg =0;
+  let latt = 0;
+  let longg =0;
   
 
   const [form, setValues] = useState({
@@ -24,45 +24,44 @@ const Home = ({props,cars}) => {
     longitude: 1,
   });
 
-  const update = () => {
+  const update = (lat,lon) => {
     setValues({
       ...form,
-      latitude: 0,
-      longitude: 0
+      latitude: lat,
+      longitude: lon
 
     });
   };
 
-  const send = (latitude, longitude,id) => {
-    const bodyParameters = {
-      lat: latitude,
-      lng: longitude
-    };
-  
-    const config = {
-      headers: {
-        Authorization: `Bearer ${cookies.get('token')}`,
-        "Content-Type": "application/json",
-        'Access-Control-Allow-Origin': '*',
-      }  
-    };
-  
-    axios.put(`https://cars-api.vercel.app/api/cars/${id}`, bodyParameters, config)
+  const send = (pos) => {
+    const crd = pos.coords;
+    const carList = cars.filter(car => car.idUser === cookies.get('id'));    
+    carList.forEach(element => {
+
+      const bodyParameters = {
+        lat: crd.latitude,
+        lng: crd.longitude
+      };
+    
+      const config = {
+        headers: {
+          Authorization: `Bearer ${cookies.get('token')}`,
+          "Content-Type": "application/json",
+          'Access-Control-Allow-Origin': '*',
+        }  
+      };
+    
+      axios.put(`https://cars-api.vercel.app/api/cars/${element._id}`, bodyParameters, config)
+
+    });
+    console.log(carList);   
+    console.log(crd.latitude , crd.longitude);
+
       
   }
 
  
-  function success(pos) {
-    const crd = pos.coords;
-  
-    console.log('Your current position is:');
-    console.log(`Latitude : ${  crd.latitude}`);
-    console.log(`Longitude: ${  crd.longitude}`);
-    console.log(`More or less ${  crd.accuracy  } meters.`);
 
-    latt = crd.latitude;
-    longg = crd.longitude;
-  };
   
   function error(err) {
     console.warn(`ERROR(${  err.code  }): ${  err.message}`);
@@ -70,30 +69,24 @@ const Home = ({props,cars}) => {
 
   const handleSubmit = event => {
 
-    const carList = cars.filter(car => car.idUser === cookies.get('id'));    
 
-    navigator.geolocation.getCurrentPosition(success, error);
+    navigator.geolocation.getCurrentPosition(send, error);
+    
+    
+    
+
+    
+    
     
     event.preventDefault();
-    
-    carList.forEach(element => {
-      send(latt, longg,element._id);
 
-    });
-
-    
-    console.log(carList);   
-    
-    console.log(form.latitude , form.longitude);
-    
-    
   }
 
 
 
   return (
     <>
-
+      <Header />
       <form className="login__container--form" onSubmit={handleSubmit}>
         
         <button className="button" type="submit"> Set Online </button>
